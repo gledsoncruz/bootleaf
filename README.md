@@ -8,7 +8,7 @@ http://geo.epdvr.com.br/mapavr/
 
 ### Features:
 * Fullscreen mobile-friendly map template with responsive Navbar and modal placeholders
-* jQuery loading of external GeoJSON from ***Geoserver*** !!!
+* jQuery loading of external GeoJSON from [***Geoserver***](http://geoserver.org/) !!!
 * Elegant client-side multi-layer feature search with autocomplete using [typeahead.js](http://twitter.github.io/typeahead.js/)
 * Integration of Bootstrap tables into Leaflet popups
 * Logic for minimizing layer control and switching to modal popups on small screens
