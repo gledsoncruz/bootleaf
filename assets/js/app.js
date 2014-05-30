@@ -72,10 +72,17 @@ var bairrosWMS = new L.TileLayer.WMS("http://geo.epdvr.com.br/geoserver/wms", {
             transparent: true
         });
 
-var limite = new L.TileLayer.WMS("http://geo.epdvr.com.br/geoserver/wms", {
+var limiteWMS = new L.TileLayer.WMS("http://geo.epdvr.com.br/geoserver/wms", {
             layers: 'nebulosa:limitevr_oficial',
             format: 'image/png',
             transparent: true
+        });
+
+var lotesWMS = new L.TileLayer.WMS("http://geo.epdvr.com.br/geoserver/wms", {
+            layers: 'nebulosa:lotesvr',
+            format: 'image/png',
+            transparent: true,
+            crs: L.CRS.EPSG4326
         });
 
 
@@ -86,7 +93,6 @@ var markerClusters = new L.MarkerClusterGroup({
   zoomToBoundsOnClick: true,
   disableClusteringAtZoom: 16
 });
-
 
 /* BAIRROS */
 
@@ -362,7 +368,7 @@ $.when(
 map = L.map("map", {
   zoom: 13,
   center: [-22.511447, -44.108906],
-  layers: [mapquestOSM, markerClusters],
+  layers: [googleRoadMap, markerClusters, lotesWMS],
   zoomControl: false
 });
 
@@ -409,23 +415,24 @@ var zoomControl = L.control.zoom({
 }).addTo(map);
 
 var baseLayers = {
-  "Street Map" : mapquestOSM,
-  "Satelite": googleSatellite,
-  "Hybrid": googleHybrid
-  //"Google Hybrid" : googleHybrid
+    "Street Map" : googleRoadMap,
+    "Satelite": googleSatellite,
+    "Hybrid": googleHybrid
 };
 
 var groupedOverlays = {
+
+  "Camadas": {
+    "Limite Municipal": limiteWMS,
+    "Bairros": bairrosWMS
+    //"Lotes": lotesWMS
+    //"Subway Lines": subwayLines
+  },
   "Pontos de Interesse": {
     "<img src='assets/img/school.png' width='24' height='28'>&nbsp;Educacao Municipal": educacaoLayer,
     "<img src='assets/img/hospital-building.png' width='24' height='28'>&nbsp;Saude Municipal": saudeLayer,
     "<img src='assets/img/wifi.png' width='24' height='28'>&nbsp;Aldeia Digital": aldeiaLayer,
     "<img src='assets/img/mao.png' width='24' height='28'>&nbsp;CRAS": crasLayer
-  },
-  "Camadas": {
-    "Limite Municipal" : limite,
-    "Bairros" : bairrosWMS
-    //"Subway Lines": subwayLines
   }
 };
 
