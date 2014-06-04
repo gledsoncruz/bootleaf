@@ -1,11 +1,8 @@
-var map, bairrosSearch = [], educacaoSearch = [], saudeSearch = [], aldeiaSearch = [], crasSearch = [];
+var map, bairrosSearch = [], educacaoSearch = [], saudeSearch = [], aldeiaSearch = [], crasSearch = [], pracasSearch = [];
 
+/*
 $(document).ready(function() {
   getViewport();
-  /* Hack to refresh tabs after append */
-  //$("#poi-tabs a[href='#saude']").tab("show");
-  $("#poi-tabs a[href='#educacao']").tab("show");
-  //$("#poi-tabs a[href='#aldeia']").tab("show");
 });
 
 function getViewport() {
@@ -27,9 +24,9 @@ function getViewport() {
     });
   }
 }
-
+*/
+/*
 function sidebarClick(lat, lng, id, layer) {
-  /* If sidebar takes up entire screen, hide it and go to the map */
   if (document.body.clientWidth <= 767) {
     sidebar.hide();
     getViewport();
@@ -40,9 +37,9 @@ function sidebarClick(lat, lng, id, layer) {
   }
   map._layers[id].fire("click");
 }
-
+*/
 /* Basemap Layers */
-
+/*
 var mapquestOSM = L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png", {
   maxZoom: 19,
   subdomains: ["otile1", "otile2", "otile3", "otile4"],
@@ -61,7 +58,7 @@ var mapquestHYB = L.layerGroup([L.tileLayer("http://{s}.mqcdn.com/tiles/1.0.0/sa
   subdomains: ["oatile1", "oatile2", "oatile3", "oatile4"],
   attribution: 'Labels courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png">. Map data (c) <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors, CC-BY-SA. Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency'
 })]);
-
+*/
 var googleRoadMap = new L.Google('ROADMAP');
 var googleSatellite = new L.Google('SATELLITE');
 var googleHybrid = new L.Google('HYBRID');
@@ -324,6 +321,58 @@ function crasJSON(data){
   map.addLayer(crasLayer);
 }
 
+
+/* PRACAS LAYER */
+
+var pracasLayer = L.geoJson(null);
+var pracas = L.geoJson(null, {
+  pointToLayer: function (feature, latlng) {
+    return L.marker(latlng, {
+      icon: L.icon({
+        iconUrl: "assets/img/pracas.png",
+        iconSize: [24, 28],
+        iconAnchor: [12, 28],
+        popupAnchor: [0, -25]
+      }),
+      title: feature.properties.nome,
+      riseOnHover: true
+    });
+  },
+  onEachFeature: function (feature, layer) {
+    if (feature.properties) {
+      var content = "<table class='table table-striped table-bordered table-condensed'>" + "<tr><th>Nome</th><td>" + feature.properties.nome + "</td></tr><table>";
+      if (document.body.clientWidth <= 767) {
+        layer.on({
+          click: function (e) {
+            $("#feature-title").html(feature.properties.nome);
+            $("#feature-info").html(content);
+            $("#featureModal").modal("show");
+          }
+        });
+      } else {
+        layer.bindPopup(content, {
+          maxWidth: "auto",
+          closeButton: false
+        });
+      }
+      $("#pracas-table tbody").append('<tr><td class="pracas-nome"><a href="#" onclick="sidebarClick('+layer.feature.geometry.coordinates[1]+', '+layer.feature.geometry.coordinates[0]+', '+L.stamp(layer)+', pracasLayer); return false;">'+layer.feature.properties.nome+'</a></td></tr>');
+      pracasSearch.push({
+        name: layer.feature.properties.nome,
+        //address: layer.feature.properties.tel_ramal,
+        source: "Pracas",
+        id: L.stamp(layer),
+        lat: layer.feature.geometry.coordinates[1],
+        lng: layer.feature.geometry.coordinates[0]
+      });
+    }
+  }
+});
+
+function pracasJSON(data){
+  pracas.addData(data);
+  map.addLayer(pracasLayer);
+}
+
 /* CHAMADAS AJAX GEOSERVER */
 
 $.when(
@@ -358,6 +407,14 @@ $.when(
     success: crasJSON,
     cache: false
     //error: alert("ERRORRR SAUDE")
+  }),
+   $.ajax({
+    url : "http://geo.epdvr.com.br/geoserver/nebulosa/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=nebulosa:vw_pracas&srsName=EPSG:4326&outputFormat=json&format_options=callback:getJson5",
+    dataType : 'jsonp',
+    jsonpCallback: 'getJson5',
+    success: pracasJSON,
+    cache: false
+    //error: alert("ERRORRR SAUDE")
   })
    ).then(function( data, textStatus, jqXHR ) {
           console.log("AJAX OK") // Alerts 200
@@ -386,6 +443,9 @@ map.on("overlayadd", function(e) {
   if (e.layer === crasLayer) {
     markerClusters.addLayer(cras);
   }
+  if (e.layer === pracasLayer) {
+    markerClusters.addLayer(pracas);
+  }
 });
 
 map.on("overlayremove", function(e) {
@@ -400,6 +460,9 @@ map.on("overlayremove", function(e) {
   }
   if (e.layer === crasLayer) {
     markerClusters.removeLayer(cras);
+  }
+  if (e.layer === pracasLayer) {
+    markerClusters.removeLayer(pracas);
   }
 });
 
@@ -432,14 +495,15 @@ var groupedOverlays = {
     "<img src='assets/img/school.png' width='24' height='28'>&nbsp;Educacao Municipal": educacaoLayer,
     "<img src='assets/img/hospital-building.png' width='24' height='28'>&nbsp;Saude Municipal": saudeLayer,
     "<img src='assets/img/wifi.png' width='24' height='28'>&nbsp;Aldeia Digital": aldeiaLayer,
-    "<img src='assets/img/mao.png' width='24' height='28'>&nbsp;CRAS": crasLayer
+    "<img src='assets/img/mao.png' width='24' height='28'>&nbsp;CRAS": crasLayer,
+    "<img src='assets/img/pracas.png' width='24' height='28'>&nbsp;Pracas": pracasLayer
   }
 };
 
 var layerControl = L.control.groupedLayers(baseLayers, groupedOverlays, {
   collapsed: isCollapsed
 }).addTo(map);
-
+/*
 var sidebar = L.control.sidebar("sidebar", {
   closeButton: true,
   position: "left"
@@ -448,11 +512,23 @@ var sidebar = L.control.sidebar("sidebar", {
 }).on("hidden", function () {
   getViewport();
 }).addTo(map);
-
+*/
 /* Highlight search box text on click */
 $("#searchbox").click(function () {
   $(this).select();
 });
+
+
+/*
+$('#searchbox').keyup(function () {
+    console.log($('#searchbox').val().length);
+   if ($('#searchbox').val().length > 7){
+    console.log($('#searchbox').val());
+    carregarLotes($('#searchbox').val());
+    //refreshLotesBH();
+   }
+  });
+*/
 
 /* Typeahead search functionality */
 $(document).one("ajaxStop", function () {
@@ -478,7 +554,7 @@ $(document).one("ajaxStop", function () {
     local: aldeiaSearch,
     limit: 10
   });
-  var aldeiaList = new List("aldeia", {valueNames: ["aldeia-name"]}).sort("aldeia-name", {order:"asc"});
+  //var aldeiaList = new List("aldeia", {valueNames: ["aldeia-name"]}).sort("aldeia-name", {order:"asc"});
 
   var educacaoBH = new Bloodhound({
     name: "Educacao",
@@ -489,7 +565,7 @@ $(document).one("ajaxStop", function () {
     local: educacaoSearch,
     limit: 10
   });
-  var educacaoList = new List("educacao", {valueNames: ["educacao-nome"]}).sort("educacao-nome", {order:"asc"});
+  //var educacaoList = new List("educacao", {valueNames: ["educacao-nome"]}).sort("educacao-nome", {order:"asc"});
 
   var saudeBH = new Bloodhound({
     name: "Saude",
@@ -500,7 +576,7 @@ $(document).one("ajaxStop", function () {
     local: saudeSearch,
     limit: 10
   });
-  var saudeList = new List("saude", {valueNames: ["saude-descricao"]}).sort("saude-descricao", {order:"asc"});
+  //var saudeList = new List("saude", {valueNames: ["saude-descricao"]}).sort("saude-descricao", {order:"asc"});
 
   var crasBH = new Bloodhound({
     name: "CRAS",
@@ -511,24 +587,26 @@ $(document).one("ajaxStop", function () {
     local: crasSearch,
     limit: 10
   });
-  var crasList = new List("cras", {valueNames: ["cras-desc_cras"]}).sort("cras-desc_cras", {order:"asc"});
+  //var crasList = new List("cras", {valueNames: ["cras-desc_cras"]}).sort("cras-desc_cras", {order:"asc"});
+
+   var pracasBH = new Bloodhound({
+    name: "Pracas",
+    datumTokenizer: function (d) {
+      return Bloodhound.tokenizers.whitespace(d.name);
+    },
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    local: pracasSearch,
+    limit: 10
+  });
+  //var pracasList = new List("pracas", {valueNames: ["pracas-nome"]}).sort("pracas-nome", {order:"asc"});
 
 
   bairrosBH.initialize();
-
-  //aldeiaBH.clear();
-  //aldeiaBH.clearPrefrechCache();
   aldeiaBH.initialize();
-
-  //educacaoBH.clear();
-  //educacaoBH.clearPrefrechCache();
   educacaoBH.initialize();
-
-  //saudeBH.clear();
-  //saudeBH.clearPrefrechCache();
   saudeBH.initialize();
-
   crasBH.initialize();
+  pracasBH.initialize();
 
   $("#searchbox").typeahead({
     minLength: 3,
@@ -568,6 +646,13 @@ $(document).one("ajaxStop", function () {
     source: crasBH.ttAdapter(),
     templates: {
       header: "<h4 class='typeahead-header'><img src='assets/img/mao.png' width='24' height='28'>&nbsp;CRAS</h4>"
+    }
+  },{
+    name: "Pracas",
+    displayKey: "name",
+    source: pracasBH.ttAdapter(),
+    templates: {
+      header: "<h4 class='typeahead-header'><img src='assets/img/pracas.png' width='24' height='28'>&nbsp;Pracas</h4>"
     }
   }).on("typeahead:selected", function (obj, datum) {
 
@@ -611,6 +696,16 @@ $(document).one("ajaxStop", function () {
       }
     }
 
+    if (datum.source === "Pracas") {
+      if (!map.hasLayer(pracasLayer)) {
+        map.addLayer(pracasLayer);
+      }
+      map.setView([datum.lat, datum.lng], 17);
+      if (map._layers[datum.id]) {
+        map._layers[datum.id].fire("click");
+      }
+    }
+
     if ($(".navbar-collapse").height() > 50) {
       $(".navbar-collapse").collapse("hide");
     }
@@ -625,6 +720,8 @@ $(document).one("ajaxStop", function () {
   $(".twitter-typeahead").css("display", "block");
 
 });
+
+
 
 /* Placeholder hack for IE */
 if (navigator.appName == "Microsoft Internet Explorer") {

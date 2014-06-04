@@ -53,116 +53,13 @@
         <ul class="nav navbar-nav">
           <!--li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="$('#aboutModal').modal('show'); return false;"><i class="fa fa-question-circle" style="color: white"></i>&nbsp;&nbsp;Sobre</a></li-->
 
-          <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="sidebar.toggle(); return false;"><i class="fa fa-list" style="color: white"></i>&nbsp;&nbsp;Consultas</a></li>
+          <!--li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" onclick="sidebar.toggle(); return false;"><i class="fa fa-list" style="color: white"></i>&nbsp;&nbsp;Consultas</a></li-->
         </ul>
       </div><!--/.navbar-collapse -->
     </div>
 
     <div id="map"></div>
-    <div id="sidebar">
-      <h4>Pontos de Interesse</h4>
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs" id="poi-tabs">
-        <li class="active"><a href="#educacao" onclick="$('#poi-tabs a[href=\'#educacao\']').tab('show'); return false;">Educação</a></li>
-        <li><a href="#saude" onclick="$('#poi-tabs a[href=\'#saude\']').tab('show'); return false;">Saude</a></li>
-        <li><a href="#aldeia" onclick="$('#poi-tabs a[href=\'#aldeia\']').tab('show'); return false;">Aldeia Digital</a></li>
-        <li><a href="#cras" onclick="$('#poi-tabs a[href=\'#cras\']').tab('show'); return false;">CRAS</a></li>
 
-      </ul>
-      <!-- Tab panes -->
-      <div class="tab-content">
-        <div class="tab-pane active" id="educacao">
-          <p>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <input type="text" class="form-control search" placeholder="Buscar" />
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-primary pull-right sort" data-sort="educacao-nome"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
-              </div>
-            </div>
-          </p>
-          <table class="table table-condensed table-striped" style="text-transform: uppercase;" id="educacao-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Tel/Ramal</th>
-                <th>Tipo</th>
-              <tr>
-            </thead>
-            <tbody class="list"></tbody>
-          </table>
-        </div>
-
-        <div class="tab-pane" id="saude">
-          <p>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <input type="text" class="form-control search" placeholder="Buscar" />
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-primary pull-right sort" data-sort="saude-descricao"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
-              </div>
-            </div>
-          </p>
-          <table class="table table-condensed table-striped" style="text-transform: uppercase;" id="saude-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Tel/Ramal</th>
-              <tr>
-            </thead>
-            <tbody class="list"></tbody>
-          </table>
-        </div>
-
-        <div class="tab-pane" id="aldeia">
-          <p>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <input type="text" class="form-control search" placeholder="Buscar" />
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-primary pull-right sort" data-sort="aldeia-name"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
-              </div>
-            </div>
-          </p>
-          <table class="table table-condensed table-striped" style="text-transform: uppercase;" id="aldeia-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-              <tr>
-            </thead>
-            <tbody class="list"></tbody>
-          </table>
-        </div>
-
-        <div class="tab-pane" id="cras">
-          <p>
-            <div class="row">
-              <div class="col-xs-8 col-md-8">
-                <input type="text" class="form-control search" placeholder="Buscar" />
-              </div>
-              <div class="col-xs-4 col-md-4">
-                <button type="button" class="btn btn-primary pull-right sort" data-sort="cras-name"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
-              </div>
-            </div>
-          </p>
-          <table class="table table-condensed table-striped" style="text-transform: uppercase;" id="cras-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Tel</th>
-              <tr>
-            </thead>
-            <tbody class="list"></tbody>
-          </table>
-        </div>
-
-
-      </div>
-
-    </div>
     <div id="loading">
       <div class="loading-indicator">
         <div class="progress progress-striped active">
